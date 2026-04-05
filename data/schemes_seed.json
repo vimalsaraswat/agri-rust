@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Pradhan Mantri Kisan Samman Nidhi",
+    "short_name": "PM-KISAN",
+    "description": "A central government scheme providing income support of ₹6,000 per year to landholding farmer families across India, paid in three installments of ₹2,000 directly to their bank accounts.",
+    "eligibility": "All land-holding farmer families with combined landholding up to 2 hectares. Excludes institutional landholders and certain high-income categories.",
+    "benefits": "₹6,000/year in 3 installments of ₹2,000 each via Direct Benefit Transfer (DBT)",
+    "apply_url": "https://pmkisan.gov.in",
+    "category": "IncomeSupport"
+  },
+  {
+    "name": "Pradhan Mantri Fasal Bima Yojana",
+    "short_name": "PMFBY",
+    "description": "Comprehensive crop insurance covering losses due to natural calamities, pests, and diseases. Farmers pay very low premiums — 2% for Kharif, 1.5% for Rabi, 5% for horticulture crops.",
+    "eligibility": "All farmers growing notified crops in notified areas. Mandatory for loanee farmers, voluntary for others.",
+    "benefits": "Full crop loss coverage at market value. Premium capped at 2% (Kharif) / 1.5% (Rabi) / 5% (horticulture). Government pays remaining premium.",
+    "apply_url": "https://pmfby.gov.in",
+    "category": "Insurance"
+  },
+  {
+    "name": "Kisan Credit Card",
+    "short_name": "KCC",
+    "description": "Provides farmers with flexible, affordable credit for cultivation, post-harvest expenses, and allied activities. Credit up to ₹3 lakh at an effective 4% interest rate per annum after interest subvention.",
+    "eligibility": "All farmers — owner cultivators, tenant farmers, oral lessees, share croppers, and self-help groups.",
+    "benefits": "Revolving credit up to ₹3 lakh at 4% interest p.a. Flexible repayment linked to harvesting seasons. Accidental insurance cover of ₹50,000.",
+    "apply_url": "https://www.nabard.org/content.aspx?id=591",
+    "category": "Credit"
+  },
+  {
+    "name": "Pradhan Mantri Krishi Sinchayee Yojana",
+    "short_name": "PMKSY",
+    "description": "Aims to bring every farm under assured irrigation with the motto 'Har Khet Ko Pani, More Crop Per Drop'. Provides subsidies on drip and sprinkler micro-irrigation systems.",
+    "eligibility": "All farmers. Special focus on small and marginal farmers. Subsidy: 55% for small/marginal farmers, 45% for others.",
+    "benefits": "Up to 55% subsidy on drip and sprinkler irrigation equipment. Funds for watershed development, water harvesting structures, and canal modernisation.",
+    "apply_url": "https://pmksy.gov.in",
+    "category": "Irrigation"
+  },
+  {
+    "name": "National Agriculture Market",
+    "short_name": "eNAM",
+    "description": "A pan-India electronic trading portal that networks existing APMC mandis to create a unified national market. Enables farmers to sell produce online and get better, transparent prices.",
+    "eligibility": "All farmers registered with their local APMC mandi. Free registration at any eNAM-linked mandi.",
+    "benefits": "Access to wider market and better price discovery. Online payment directly to bank account. Reduced dependency on middlemen.",
+    "apply_url": "https://enam.gov.in",
+    "category": "MarketAccess"
+  },
+  {
+    "name": "Rashtriya Krishi Vikas Yojana",
+    "short_name": "RKVY",
+    "description": "Incentivises states to increase investment in agriculture and allied sectors by funding projects for farm infrastructure, soil health, water management, and post-harvest management.",
+    "eligibility": "Implemented via state governments. Individual farmers benefit through state sub-schemes under RKVY for machinery, irrigation, and storage.",
+    "benefits": "Subsidies and grants for farm mechanisation, irrigation systems, cold storage, processing infrastructure. Benefits vary by state and project.",
+    "apply_url": "https://rkvy.da.gov.in",
+    "category": "Infrastructure"
+  },
+  {
+    "name": "Soil Health Card Scheme",
+    "short_name": "SHC",
+    "description": "Provides every farmer with a Soil Health Card containing crop-wise fertilizer recommendations based on soil nutrient analysis, helping reduce input costs and increase productivity.",
+    "eligibility": "All farmers in India. Completely free of cost.",
+    "benefits": "Free soil testing every 2 years. Crop-specific fertilizer and micronutrient recommendations. Reduces input costs by avoiding over-fertilisation.",
+    "apply_url": "https://soilhealth.dac.gov.in",
+    "category": "Training"
+  },
+  {
+    "name": "PM Kisan Maandhan Yojana",
+    "short_name": "PM-KMY",
+    "description": "A voluntary contributory pension scheme for small and marginal farmers. Farmers aged 18-40 contribute ₹55-200/month (age-based), and receive a guaranteed pension of ₹3,000/month after age 60.",
+    "eligibility": "Small and marginal farmers aged 18-40 years with cultivable land up to 2 hectares. Must be enrolled in PM-KISAN.",
+    "benefits": "₹3,000/month guaranteed pension after age 60. Government contributes an equal matching amount. Family pension on death of subscriber.",
+    "apply_url": "https://pmkmy.gov.in",
+    "category": "IncomeSupport"
+  },
+  {
+    "name": "National Food Security Mission",
+    "short_name": "NFSM",
+    "description": "Aims to increase production of rice, wheat, pulses, coarse cereals, and oilseeds through area expansion and productivity enhancement. Provides free or subsidised seeds, micronutrients, and farm equipment.",
+    "eligibility": "Farmers in identified districts with focus on small and marginal farmers. Applied through state agriculture departments.",
+    "benefits": "Subsidised or free certified seeds. Subsidy on micronutrients, soil amendments, and farm machinery. Training and demonstration support through Krishi Vigyan Kendras.",
+    "apply_url": "https://nfsm.gov.in",
+    "category": "Infrastructure"
+  },
+  {
+    "name": "Sub Mission on Agricultural Mechanisation",
+    "short_name": "SMAM",
+    "description": "Promotes farm mechanisation among small and marginal farmers through subsidies on agricultural machinery. Also funds Custom Hiring Centres so farmers can affordably rent expensive equipment.",
+    "eligibility": "Individual farmers (40-50% subsidy). SC/ST and women farmers (50% subsidy). CHC setup operators (40-50% on centre cost).",
+    "benefits": "40-50% subsidy on tractors, power tillers, harvesters, and implements. Custom Hiring Centres provide affordable machinery access without ownership.",
+    "apply_url": "https://farmech.dac.gov.in",
+    "category": "Infrastructure"
+  }
+]

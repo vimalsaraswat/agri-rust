@@ -24,6 +24,7 @@ pub struct AppConfig {
     pub server_port: u16,
     pub environment: Environment,
     pub allowed_origins: Vec<String>,
+    pub gemini_api_key: String,
 }
 
 impl AppConfig {
@@ -68,6 +69,8 @@ impl AppConfig {
             .filter(|s| !s.is_empty())
             .collect();
 
+        let gemini_api_key = required_env("GEMINI_API_KEY");
+
         AppConfig {
             database_url,
             database_name,
@@ -79,6 +82,7 @@ impl AppConfig {
             server_port,
             environment,
             allowed_origins,
+            gemini_api_key,
         }
     }
 }

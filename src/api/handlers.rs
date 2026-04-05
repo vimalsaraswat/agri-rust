@@ -1,4 +1,4 @@
-use axum::{extract::State, http::StatusCode, Json};
+use axum::{extract::{Query, State}, http::StatusCode, Json};
 use serde::Serialize;
 use validator::Validate;
 
@@ -9,9 +9,14 @@ use crate::{
         response::ApiResponse,
         router::AppState,
     },
-    application::auth::dto::{
-        AuthResponse, AuthTokens, LoginRequest, RefreshTokenRequest, RegisterRequest,
-        UpdateProfileRequest, UserProfile,
+    application::{
+        auth::dto::{
+            AuthResponse, AuthTokens, LoginRequest, RefreshTokenRequest, RegisterRequest,
+            UpdateProfileRequest, UserProfile,
+        },
+        chat::dto::{ChatRequest, ChatResponseDto},
+        msp::dto::{MspListResponse, MspQuery},
+        schemes::dto::{NewsResponse, SchemesQuery, SchemesResponse},
     },
 };
 
@@ -66,6 +71,39 @@ pub async fn update_me(
     body.validate().map_err(ApiError::Validation)?;
     let profile = state.auth_service.update_me(&auth.user_id, body).await?;
     Ok(ApiResponse::ok("Profile updated", profile))
+}
+
+pub async fn chat(
+    State(state): State<AppState>,
+    auth: AuthUser,
+    Json(body): Json<ChatRequest>,
+) -> Result<(StatusCode, Json<ApiResponse<ChatResponseDto>>), ApiError> {
+    body.validate().map_err(ApiError::Validation)?;
+    let result = state.chat_service.chat(&auth.user_id, body).await?;
+    Ok(ApiResponse::ok("Response generated", result))
+}
+
+pub async fn schemes(
+    State(state): State<AppState>,
+    Query(params): Query<SchemesQuery>,
+) -> Result<(StatusCode, Json<ApiResponse<SchemesResponse>>), ApiError> {
+    let result = state.schemes_service.get_schemes(params).await?;
+    Ok(ApiResponse::ok("Schemes fetched", result))
+}
+
+pub async fn schemes_news(
+    State(state): State<AppState>,
+) -> Result<(StatusCode, Json<ApiResponse<NewsResponse>>), ApiError> {
+    let result = state.schemes_service.get_news().await?;
+    Ok(ApiResponse::ok("Latest scheme news fetched", result))
+}
+
+pub async fn msp_prices(
+    State(state): State<AppState>,
+    Query(params): Query<MspQuery>,
+) -> Result<(StatusCode, Json<ApiResponse<MspListResponse>>), ApiError> {
+    let result = state.msp_service.get_prices(params).await?;
+    Ok(ApiResponse::ok("MSP prices fetched", result))
 }
 
 #[derive(Serialize)]

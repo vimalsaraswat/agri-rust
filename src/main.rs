@@ -14,9 +14,11 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, Env
 
 use crate::{
     api::router::{create_router, AppState},
-    application::auth::AuthService,
+    application::{auth::AuthService, chat::ChatService, msp::MspService, schemes::SchemesService},
     config::{AppConfig, Environment},
-    infrastructure::{db, MongoUserRepository},
+    infrastructure::{
+        db, GeminiClient, MongoMspRepository, MongoSchemesRepo, MongoUserRepository, NewsFetcher,
+    },
 };
 
 #[tokio::main]
@@ -31,9 +33,28 @@ async fn main() {
 
     let client = db::connect(&config).await;
     let database = client.database(&config.database_name);
-    let repo = Arc::new(MongoUserRepository::new(&database));
-    let service = AuthService::new(repo, Arc::clone(&config));
-    let state = AppState::new(service, Arc::clone(&config));
+
+    let user_repo = Arc::new(MongoUserRepository::new(&database));
+    let auth_service = AuthService::new(Arc::clone(&user_repo), Arc::clone(&config));
+
+    let msp_repo = MongoMspRepository::new(&database);
+    msp_repo.ensure_ready().await;
+    let msp_service = MspService::new(msp_repo);
+
+    let gemini = GeminiClient::new(config.gemini_api_key.clone());
+    let chat_service = ChatService::new(Arc::clone(&user_repo), gemini);
+
+    let schemes_repo = MongoSchemesRepo::new(&database);
+    schemes_repo.ensure_ready().await;
+    let schemes_service = SchemesService::new(schemes_repo, NewsFetcher::new());
+
+    let state = AppState::new(
+        auth_service,
+        msp_service,
+        chat_service,
+        schemes_service,
+        Arc::clone(&config),
+    );
 
     let addr: SocketAddr = format!("{}:{}", config.server_host, config.server_port)
         .parse()

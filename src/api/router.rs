@@ -14,20 +14,35 @@ use tower_http::{
 
 use crate::{
     api::handlers,
-    application::auth::AuthService,
+    application::{auth::AuthService, chat::ChatService, msp::MspService, schemes::SchemesService},
     config::{AppConfig, Environment},
-    infrastructure::MongoUserRepository,
+    infrastructure::{MongoMspRepository, MongoUserRepository},
 };
 
 #[derive(Clone)]
 pub struct AppState {
     pub auth_service: Arc<AuthService<MongoUserRepository>>,
+    pub msp_service: Arc<MspService<MongoMspRepository>>,
+    pub chat_service: Arc<ChatService<MongoUserRepository>>,
+    pub schemes_service: Arc<SchemesService>,
     pub config: Arc<AppConfig>,
 }
 
 impl AppState {
-    pub fn new(service: AuthService<MongoUserRepository>, config: Arc<AppConfig>) -> Self {
-        Self { auth_service: Arc::new(service), config }
+    pub fn new(
+        auth_service: AuthService<MongoUserRepository>,
+        msp_service: MspService<MongoMspRepository>,
+        chat_service: ChatService<MongoUserRepository>,
+        schemes_service: SchemesService,
+        config: Arc<AppConfig>,
+    ) -> Self {
+        Self {
+            auth_service: Arc::new(auth_service),
+            msp_service: Arc::new(msp_service),
+            chat_service: Arc::new(chat_service),
+            schemes_service: Arc::new(schemes_service),
+            config,
+        }
     }
 }
 
@@ -39,8 +54,15 @@ pub fn create_router(state: AppState) -> Router {
         .route("/logout", post(handlers::logout))
         .route("/me", get(handlers::me).patch(handlers::update_me));
 
+    let schemes = Router::new()
+        .route("/", get(handlers::schemes))
+        .route("/news", get(handlers::schemes_news));
+
     let api_v1 = Router::new()
         .nest("/auth", auth)
+        .nest("/schemes", schemes)
+        .route("/msp", get(handlers::msp_prices))
+        .route("/chat", post(handlers::chat))
         .route("/health", get(handlers::health));
 
     let x_req_id = HeaderName::from_static("x-request-id");
