@@ -5,7 +5,7 @@ use tracing::error;
 use crate::domain::errors::DomainError;
 
 const GEMINI_URL: &str =
-    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent";
 
 #[derive(Serialize)]
 struct GeminiRequest<'a> {

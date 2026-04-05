@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
 use axum::{
-    http::{HeaderName, HeaderValue, Method},
+    http::{HeaderName, HeaderValue, Method, StatusCode},
+    response::IntoResponse,
     routing::{get, post},
-    Router,
+    Json, Router,
 };
 use tower_http::{
     cors::{AllowHeaders, AllowMethods, AllowOrigin, CorsLayer},
@@ -69,12 +70,26 @@ pub fn create_router(state: AppState) -> Router {
 
     Router::new()
         .nest("/api/v1", api_v1)
+        .fallback(not_found)
         .layer(SetSensitiveHeadersLayer::new([axum::http::header::AUTHORIZATION]))
         .layer(PropagateRequestIdLayer::new(x_req_id.clone()))
         .layer(TraceLayer::new_for_http())
         .layer(SetRequestIdLayer::new(x_req_id, MakeRequestUuid))
         .layer(build_cors(&state.config))
         .with_state(state)
+}
+
+async fn not_found() -> impl IntoResponse {
+    (
+        StatusCode::NOT_FOUND,
+        Json(serde_json::json!({
+            "success": false,
+            "error": {
+                "code": "NOT_FOUND",
+                "message": "The requested route does not exist"
+            }
+        })),
+    )
 }
 
 fn build_cors(config: &AppConfig) -> CorsLayer {
