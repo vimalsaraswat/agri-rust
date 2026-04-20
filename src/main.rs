@@ -14,7 +14,10 @@ use tracing_subscriber::{fmt, layer::SubscriberExt, util::SubscriberInitExt, Env
 
 use crate::{
     api::router::{create_router, AppState},
-    application::{auth::AuthService, chat::ChatService, msp::MspService, schemes::SchemesService},
+    application::{
+        auth::AuthService, chat::ChatService, msp::MspService, plant::PlantService,
+        schemes::SchemesService,
+    },
     config::{AppConfig, Environment},
     infrastructure::{
         db, GeminiClient, MongoMspRepository, MongoSchemesRepo, MongoUserRepository, NewsFetcher,
@@ -42,7 +45,8 @@ async fn main() {
     let msp_service = MspService::new(msp_repo);
 
     let gemini = GeminiClient::new(config.gemini_api_key.clone());
-    let chat_service = ChatService::new(Arc::clone(&user_repo), gemini);
+    let chat_service = ChatService::new(Arc::clone(&user_repo), gemini.clone());
+    let plant_service = PlantService::new(Arc::clone(&user_repo), gemini);
 
     let schemes_repo = MongoSchemesRepo::new(&database);
     schemes_repo.ensure_ready().await;
@@ -52,6 +56,7 @@ async fn main() {
         auth_service,
         msp_service,
         chat_service,
+        plant_service,
         schemes_service,
         Arc::clone(&config),
     );

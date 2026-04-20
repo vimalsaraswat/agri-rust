@@ -1,4 +1,8 @@
-use axum::{extract::{Query, State}, http::StatusCode, Json};
+use axum::{
+    extract::{Multipart, Query, State},
+    http::StatusCode,
+    Json,
+};
 use serde::Serialize;
 use validator::Validate;
 
@@ -16,6 +20,7 @@ use crate::{
         },
         chat::dto::{ChatRequest, ChatResponseDto},
         msp::dto::{MspListResponse, MspQuery},
+        plant::dto::PlantDiagnoseResponse,
         schemes::dto::{NewsResponse, SchemesQuery, SchemesResponse},
     },
 };
@@ -96,6 +101,60 @@ pub async fn schemes_news(
 ) -> Result<(StatusCode, Json<ApiResponse<NewsResponse>>), ApiError> {
     let result = state.schemes_service.get_news().await?;
     Ok(ApiResponse::ok("Latest scheme news fetched", result))
+}
+
+pub async fn diagnose_plant(
+    State(state): State<AppState>,
+    auth: AuthUser,
+    mut multipart: Multipart,
+) -> Result<(StatusCode, Json<ApiResponse<PlantDiagnoseResponse>>), ApiError> {
+    const MAX_SIZE: usize = 4 * 1024 * 1024; // 4MB
+
+    let mut image_bytes: Option<Vec<u8>> = None;
+    let mut mime_type: Option<String> = None;
+
+    while let Some(field) = multipart.next_field().await.map_err(|e| {
+        ApiError::BadRequest(format!("Failed to read multipart field: {e}"))
+    })? {
+        if field.name() != Some("image") {
+            continue;
+        }
+
+        let content_type = field
+            .content_type()
+            .map(|s| s.to_string())
+            .unwrap_or_else(|| "application/octet-stream".to_string());
+
+        if !matches!(
+            content_type.as_str(),
+            "image/jpeg" | "image/png" | "image/webp" | "image/heic" | "image/heif"
+        ) {
+            return Err(ApiError::BadRequest(
+                "Unsupported image type. Use JPEG, PNG, or WebP.".into(),
+            ));
+        }
+
+        let bytes = field.bytes().await.map_err(|e| {
+            ApiError::BadRequest(format!("Failed to read image data: {e}"))
+        })?;
+
+        if bytes.len() > MAX_SIZE {
+            return Err(ApiError::BadRequest(
+                "Image exceeds the 4MB size limit.".into(),
+            ));
+        }
+
+        mime_type = Some(content_type);
+        image_bytes = Some(bytes.to_vec());
+        break;
+    }
+
+    let bytes = image_bytes
+        .ok_or_else(|| ApiError::BadRequest("Missing 'image' field in form data.".into()))?;
+    let mime = mime_type.unwrap();
+
+    let result = state.plant_service.diagnose(&auth.user_id, bytes, mime).await?;
+    Ok(ApiResponse::ok("Plant diagnosis complete", result))
 }
 
 pub async fn msp_prices(

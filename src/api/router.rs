@@ -15,7 +15,10 @@ use tower_http::{
 
 use crate::{
     api::handlers,
-    application::{auth::AuthService, chat::ChatService, msp::MspService, schemes::SchemesService},
+    application::{
+        auth::AuthService, chat::ChatService, msp::MspService, plant::PlantService,
+        schemes::SchemesService,
+    },
     config::{AppConfig, Environment},
     infrastructure::{MongoMspRepository, MongoUserRepository},
 };
@@ -25,6 +28,7 @@ pub struct AppState {
     pub auth_service: Arc<AuthService<MongoUserRepository>>,
     pub msp_service: Arc<MspService<MongoMspRepository>>,
     pub chat_service: Arc<ChatService<MongoUserRepository>>,
+    pub plant_service: Arc<PlantService<MongoUserRepository>>,
     pub schemes_service: Arc<SchemesService>,
     pub config: Arc<AppConfig>,
 }
@@ -34,6 +38,7 @@ impl AppState {
         auth_service: AuthService<MongoUserRepository>,
         msp_service: MspService<MongoMspRepository>,
         chat_service: ChatService<MongoUserRepository>,
+        plant_service: PlantService<MongoUserRepository>,
         schemes_service: SchemesService,
         config: Arc<AppConfig>,
     ) -> Self {
@@ -41,6 +46,7 @@ impl AppState {
             auth_service: Arc::new(auth_service),
             msp_service: Arc::new(msp_service),
             chat_service: Arc::new(chat_service),
+            plant_service: Arc::new(plant_service),
             schemes_service: Arc::new(schemes_service),
             config,
         }
@@ -59,9 +65,13 @@ pub fn create_router(state: AppState) -> Router {
         .route("/", get(handlers::schemes))
         .route("/news", get(handlers::schemes_news));
 
+    let plant = Router::new()
+        .route("/diagnose", post(handlers::diagnose_plant));
+
     let api_v1 = Router::new()
         .nest("/auth", auth)
         .nest("/schemes", schemes)
+        .nest("/plant", plant)
         .route("/msp", get(handlers::msp_prices))
         .route("/chat", post(handlers::chat))
         .route("/health", get(handlers::health));
